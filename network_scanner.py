@@ -45,14 +45,21 @@ def scan_network(ip_range):
     return devices
 
 if __name__ == "__main__":
-    from scapy.all import conf
+    from scapy.all import conf, IFACES
     
-    # Force use of Wi-Fi interface
-    conf.iface = "Wi-Fi"
+    # Auto-detect your local IP
+    hostname = socket.gethostname()
+    local_ip = socket.gethostbyname(hostname)
     
-    ip_range = "172.20.10.1/24"
+    # Let user choose interface
+    print("Available interfaces:")
+    for iface in IFACES.values():
+        if iface.ip and not iface.ip.startswith("127"):
+            print(f"  {iface.name} — {iface.ip}")
     
-    print(f"Your local IP: 172.20.10.5")
-    print(f"Scanning range: {ip_range}")
+    interface = input("\nEnter interface name (e.g. Wi-Fi): ")
+    conf.iface = interface
     
-    scan_network(ip_range)
+    ip_input = input("Enter IP range to scan (e.g. 192.168.1.1/24): ")
+    
+    scan_network(ip_input)
